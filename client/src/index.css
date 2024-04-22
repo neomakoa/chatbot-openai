@@ -9,7 +9,7 @@ body {
   font-family: "Roboto Slab", serif;
 }
 
-.nav-link{
+.nav-link {
   font-weight: 600;
   text-transform: uppercase;
   margin: 0 10px;
@@ -17,4 +17,9 @@ body {
   border-radius: 10px;
   text-decoration: none;
   letter-spacing: 1px;
+}
+
+.MuiOutlinedInput-input-root.Mui-focused,
+.MuiOutlinedInput-notchedOutline {
+  border-color: white !important;
 }
