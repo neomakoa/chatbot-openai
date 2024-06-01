@@ -1,30 +1,66 @@
-import React from "react";
-import { Box, Avatar, Typography, Button } from "@mui/material";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Box, Avatar, Typography, Button, IconButton } from "@mui/material";
 import red from "@mui/material/colors/red";
+import toast from "react-hot-toast";
+import { IoMdSend } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
-const chatMessages = [
-  {
-    role: "user",
-    content: "Hello, can you tell me the weather forcast for tomorrow?",
-  },
-  {
-    role: "assistant",
-    content:
-      "Sure! I can help with that. Please provide me with your location.",
-  },
-  {
-    role: "user",
-    content: "I'm in New York City.",
-  },
-  {
-    role: "assistant",
-    content:
-      "Great! Give me a moment to fetch the weather information for New York City.",
-  },
-];
+import ChatItem from "../components/ChatItem";
+import { getUserChats, sendChatRequest } from "../helpers/api-communicator";
+
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+};
 const Chat = () => {
+  const navigate = useNavigate();
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const auth = useAuth();
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
+  const handleSubmit = async () => {
+    const content = inputRef.current?.value as string;
+    if (inputRef && inputRef.current) {
+      inputRef.current.value = "";
+    }
+    const newMessage: Message = { role: "user", content };
+    setChatMessages((prev) => [...prev, newMessage]);
+    const chatData = await sendChatRequest(content);
+    setChatMessages([...chatData.chats]);
+  };
+
+  const handleDeleteChats = async () => {
+    try {
+      toast.loading("Deleting chats.", { id: "deletechats" });
+      setChatMessages([]);
+      toast.success("Chats deleted successfully.", { id: "deletechats" });
+    } catch (error) {
+      console.log(error);
+      toast.error("Chats deletion failed.", { id: "deletechats" });
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (auth?.isLoggedIn && auth.user) {
+      toast.loading("Loading chats...", { id: "loadchats" });
+      getUserChats()
+        .then((data) => {
+          setChatMessages([...data.chats]);
+          toast.success("Chats loaded successfully.", { id: "loadchats" });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Failed to load chats.", { id: "loadchats" });
+        });
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    if (!auth?.user) {
+      return navigate("/login");
+    }
+  }, [auth]);
+
   return (
     <Box
       sx={{
@@ -74,6 +110,7 @@ const Chat = () => {
             education, etc. But avoid sharing personal information
           </Typography>
           <Button
+            onClick={handleDeleteChats}
             sx={{
               width: "200px",
               my: "auto",
@@ -116,9 +153,40 @@ const Chat = () => {
             scrollBehavior: "smooth",
           }}
         >
-          {chatMessages.map((chat) => (
-            <>{chat.content}</>
+          {chatMessages.map((chat, index) => (
+            //@ts-ignore
+            <ChatItem content={chat.content} role={chat.role} key={index} />
           ))}
+        </Box>
+        <Box
+          sx={{
+            w: "100%",
+            p: "20px",
+            borderRadius: 8,
+            backgroundColor: "rgb(17,27,39)",
+            display: "flex",
+            margin: "auto",
+          }}
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            style={{
+              width: "100%",
+              backgroundColor: "transparent",
+              padding: "10px",
+              border: "none",
+              outline: "none",
+              color: "white",
+              fontSize: "20px",
+            }}
+          />
+          <IconButton
+            onClick={handleSubmit}
+            sx={{ ml: "auto", color: "white" }}
+          >
+            <IoMdSend />
+          </IconButton>
         </Box>
       </Box>
     </Box>

@@ -7,12 +7,17 @@ type Props = {
   textColor: string;
   onClick?: () => Promise<void>;
 };
-const NaviLink = ( props: Props) => {
-  return <Link 
-  className="nav-link"
-  to={props.to}
-    style={{ background: props.bg, color: props.textColor}}
-  >{props.text}</Link>;
+const NaviLink = (props: Props) => {
+  return (
+    <Link
+      onClick={props.onClick}
+      className="nav-link"
+      to={props.to}
+      style={{ background: props.bg, color: props.textColor }}
+    >
+      {props.text}
+    </Link>
+  );
 };
 
 export default NaviLink;

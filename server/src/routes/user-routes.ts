@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   getAllUsers,
   userLogin,
+  userLogout,
   userSignUp,
   verifyUser,
 } from "../controllers/user-controllers.js";
@@ -19,4 +20,5 @@ userRoutes.get("/", getAllUsers);
 userRoutes.post("/signup", validate(signUpValidator), userSignUp);
 userRoutes.post("/login", validate(loginValidator), userLogin);
 userRoutes.get("/auth-status", verifyToken, verifyUser);
+userRoutes.get("/logout", verifyToken, userLogout);
 export default userRoutes;
