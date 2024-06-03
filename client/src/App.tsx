@@ -15,13 +15,13 @@ function App() {
     <main>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/signup" element={<SignUp />}></Route>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
         {auth?.isLoggedIn && auth.user && (
-          <Route path="/chat" element={<Chat />}></Route>
+          <Route path="/chat" element={<Chat />} />
         )}
-        <Route path="*" element={<NotFound />}></Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </main>
   );

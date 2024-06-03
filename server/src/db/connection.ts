@@ -1,20 +1,20 @@
 import { connect, disconnect } from "mongoose";
 
-const connectToDatabase = async () => {
+async function connectToDatabase() {
   try {
     await connect(process.env.MONGODB_URL);
   } catch (error) {
-    throw new Error(" cannot connect to database");
+    throw new Error("Cannot connect to database.");
   }
-};
+}
 
-const disconnectDatabase = async () => {
+async function disconnectDatabase() {
   try {
     await disconnect();
   } catch (error) {
     console.log(error);
-    throw new Error("cannot disconnect from database");
+    throw new Error("Cannot disconnect from database.");
   }
-};
+}
 
 export { connectToDatabase, disconnectDatabase };
