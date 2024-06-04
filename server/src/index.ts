@@ -10,4 +10,3 @@ connectToDatabase()
     );
   })
   .catch((err) => console.log(err));
-disconnectDatabase();
